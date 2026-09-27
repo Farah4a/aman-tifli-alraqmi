@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أمان طفلي الرقمي</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:18px}.card{background:#fff;border:1px solid #e1e7ef;border-radius:24px;padding:22px;margin:12px 0}
+h1{margin:0;font-size:30px}.muted{color:#667085}.hero{background:linear-gradient(135deg,#eef6ff,#f7fbff)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{font:inherit;cursor:pointer}.tile{width:100%;text-align:right;background:#fff;border:1px solid #dfe5ee;border-radius:18px;padding:16px}.tile:hover{border-color:#5591ff}
+.icon{font-size:30px}.title{font-weight:800;margin-top:9px}.small{font-size:14px;color:#667085;line-height:1.7}
+.badge{font-size:12px;font-weight:700;color:#1769e0}.bar{height:11px;background:#edf1f6;border-radius:99px;overflow:hidden}.fill{height:100%;background:#3b82f6;width:0}
+.hidden{display:none!important}.back{border:0;background:none;color:#1769e0;font-weight:800;padding:5px 0}
+.step{display:flex;gap:10px;border:1px solid #e3e8ef;border-radius:16px;padding:12px;margin:9px 0}.num{min-width:30px;height:30px;border-radius:50%;background:#eef5ff;color:#1769e0;display:flex;align-items:center;justify-content:center;font-weight:800}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.actions button{padding:12px;border:1px solid #dce3ec;background:#fff;border-radius:14px;font-weight:700}
+.primary{background:#182230!important;color:white;border-color:#182230!important;width:100%;margin-top:14px}
+.notice{background:#eef8f3;border:1px solid #cce9da;border-radius:16px;padding:14px;line-height:1.8}
+@media(max-width:500px){.wrap{padding:10px}h1{font-size:25px}.actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div id="home" class="card hero">
+<div style="font-size:42px">🛡️</div><h1>أمان طفلي الرقمي</h1>
+<p class="muted">مساعد الأسرة لحماية الطفل في العالم الرقمي</p>
+<div class="notice"><b>وعي اليوم… أمان الغد.</b><br>اختاري الجهاز أو الموضوع، ثم طبقي الخطوات وحددي حالة كل نقطة.</div>
+<h3>الأقسام</h3><div id="modules" class="grid"></div>
+<div class="card"><div style="display:flex;justify-content:space-between"><b>التقدم</b><b id="pct">0%</b></div><div class="bar"><div id="fill" class="fill"></div></div></div>
+<button id="report" class="primary" onclick="showReport()">📊 تقرير أمان طفلي</button>
+</div>
+<div id="list" class="card hidden"><button class="back" onclick="goHome()">← الرئيسية</button><div id="listHead"></div><div id="items"></div></div>
+<div id="detail" class="card hidden"><button class="back" onclick="goList()">← العودة</button><div id="detailBody"></div></div>
+<div id="reportPage" class="card hidden"><button class="back" onclick="goHome()">← الرئيسية</button><h2>📊 تقرير أمان طفلي</h2><p class="muted">ملخص حالة نقاط الفحص.</p><div id="reportRows"></div><div id="reportAdvice" class="notice" style="margin-top:15px"></div><button class="primary" onclick="resetAll()">إعادة الفحص</button></div>
+</div>
+<script>
+const modules=[
+{id:"ps",icon:"🎮",title:"PlayStation",desc:"الحساب والمحتوى والتواصل والخصوصية والمشتريات ووقت اللعب.",items:[
+["حساب الطفل","الحساب المنفصل يسمح بتطبيق القيود على حساب الطفل.",["الإعدادات ← العائلة والرقابة الأبوية","إدارة العائلة ← إضافة طفل","تأكدي أن الطفل يستخدم حسابه الخاص."],"لا تستخدمي حسابك الشخصي كحساب الطفل."],
+["الألعاب والمحتوى","راجعي مستوى العمر والألعاب والتطبيقات المسموح بها.",["إدارة العائلة ← اختاري الطفل","الرقابة الأبوية ← الألعاب والتطبيقات","راجعي المستوى العمري والطلبات."],"يمكن للطفل طلب استثناء لبعض الألعاب."],
+["التواصل والخصوصية","راجعي الدردشة والرسائل ومن يستطيع التواصل مع الطفل.",["اختاري الطفل في PS Family","راجعي التواصل والمحتوى الذي ينشئه المستخدم","راجعي إعدادات الخصوصية."],"لا يحتاج الأمان إلى قراءة الرسائل الخاصة."],
+["المشتريات","ضعي حدًا للإنفاق الشهري.",["إدارة العائلة ← الطفل","حد الإنفاق الشهري","راجعي طلبات الشراء قبل الموافقة."],"الحد الافتراضي للإنفاق الشهري لحساب الطفل هو 0."],
+["وقت اللعب","حددي المدة وساعات اللعب لكل يوم.",["إدارة العائلة ← الطفل","إعدادات وقت اللعب","حددي ماذا يحدث عند انتهاء الوقت."],"اختاري جدولًا واقعيًا."],
+["منع تغيير القيود","امتنعي عن ترك الطفل قادرًا على تغيير القيود.",["قيود جهاز PS5","غيّري رمز قيود النظام","راجعي إنشاء مستخدم جديد وتسجيل الدخول كضيف."],"احتفظي برمز التقييد بعيدًا عن الطفل."]
+]},
+{id:"xbox",icon:"🟩",title:"Xbox / Windows",desc:"Family Safety: وقت الشاشة والمحتوى والويب والمشتريات.",items:[
+["مجموعة العائلة","أضيفي حساب الطفل إلى Microsoft Family.",["افتحي Microsoft Family Safety","أضيفي الطفل إلى مجموعة العائلة","تأكدي من اتصال جهاز الطفل بحسابه."],"استخدمي حسابًا منفصلًا للطفل."],
+["وقت الشاشة","حددي وقت استخدام Xbox وWindows.",["Family Safety ← الطفل","Screen time / وقت الشاشة","حددي الأيام والساعات والحدود."],"يمكن للطفل طلب وقت إضافي حسب الإعدادات."],
+["الألعاب والتطبيقات","استخدمي فلاتر العمر للتطبيقات والألعاب.",["Content filters","App and game filters","حددي المستوى المناسب للعمر."],"راجعي الإعدادات بعد تحديثات النظام."],
+["الويب والبحث","راجعي تصفية المواقع والبحث.",["Content filters","Web and search filters","اختاري الحظر أو المواقع المسموحة."],"راجعي المتصفحات التي يستخدمها الطفل."],
+["المشتريات","راجعي ضوابط الإنفاق وطلبات الشراء.",["Family Safety ← Spending","فعّلي إشعارات الإنفاق","راجعي طلبات الشراء."],"فعّلي الموافقة قبل الشراء."]
+]},
+{id:"switch",icon:"🔴",title:"Nintendo Switch",desc:"الوقت والألعاب والتواصل والمشتريات.",items:[
+["وقت اللعب","حددي مدة اللعب ووقت النوم.",["Nintendo Switch Parental Controls","اختاري وقت اللعب","حددي المدة ووقت النوم."],"راجعي تقرير الاستخدام دوريًا."],
+["الألعاب حسب العمر","حددي الألعاب المسموحة حسب التصنيف العمري.",["Parental Controls","اختاري مستوى العمر أو إعدادًا مخصصًا","راجعي الاستثناءات."],"استخدمي الإعداد المخصص إذا احتجتِ دقة أكبر."],
+["التواصل","راجعي الدردشة والتواصل داخل الألعاب.",["Parental Controls","Communication with Others","اختاري مستوى التقييد المناسب."],"ناقشي مع الطفل من يقبل إضافته."],
+["GameChat","راجعي إعدادات GameChat في Switch 2.",["افتحي تطبيق Parental Controls","راجعي إعدادات GameChat","وافقي فقط على الأشخاص المناسبين."],"بعض ميزات GameChat لها متطلبات عمر وإشراف."],
+["المشتريات","راجعي قيود Nintendo eShop.",["Nintendo Account","إعدادات العائلة والحساب الخاضع للإشراف","راجعي قيود المشتريات."],"لا تتركي وسيلة دفع دون حماية."]
+]},
+{id:"pc",icon:"💻",title:"الكمبيوتر",desc:"الحساب والتحديثات والمتصفح والصلاحيات.",items:[
+["حساب الطفل","لا تستخدمي حساب المدير للطفل.",["أنشئي حساب طفل منفصل","اجعليه مستخدمًا عاديًا","احتفظي بحساب المدير لك."],"الحساب الإداري قد يسمح بتجاوز بعض القيود."],
+["التحديثات","فعّلي تحديثات النظام والتطبيقات.",["Windows Update","ثبتي التحديثات المتاحة","أعيدي التشغيل عند الحاجة."],"التحديثات تقلل مخاطر أمنية معروفة."],
+["المتصفح","فعّلي فلاتر المحتوى المناسبة للعمر.",["اختاري المتصفح المستخدم","فعّلي البحث الآمن والفلاتر","راجعي المتصفحات الأخرى."],"ضبط متصفح واحد لا يكفي إذا كان هناك متصفح آخر."],
+["الكاميرا والميكروفون","راجعي صلاحيات الكاميرا والميكروفون والموقع.",["Settings ← Privacy","راجعي Camera / Microphone / Location","أغلقي الصلاحيات غير الضرورية."],"امنحي التطبيقات أقل قدر من الصلاحيات اللازمة."]
+]},
+{id:"mobile",icon:"📱",title:"الهاتف والتابلت",desc:"الحساب والتطبيقات والأذونات والمشتريات ووقت الشاشة.",items:[
+["حساب الطفل","استخدمي نظام الرقابة العائلية بدل مشاركة حسابك.",["أنشئي حسابًا عائليًا للطفل","فعّلي الرقابة العائلية","راجعي الجهاز المرتبط بالحساب."],"الحساب المنفصل يسهل تطبيق قواعد العمر."],
+["التطبيقات والأذونات","راجعي التطبيقات وصلاحياتها.",["راجعي قائمة التطبيقات","راجعي الكاميرا والميكروفون والموقع","أغلقي غير الضروري."],"راجعي التطبيقات الجديدة دوريًا."],
+["المشتريات","امتنعي عن ترك وسيلة دفع مفتوحة دون ضوابط.",["راجعي إعدادات المتجر","فعّلي طلب الموافقة أو كلمة المرور","راجعي سجل المشتريات."],"لا شراء دون إذن."],
+["وقت الشاشة","حددي وقتًا واقعيًا للتطبيقات والترفيه.",["افتحي أدوات Screen Time / Family","راجعي الاستخدام اليومي","حددي حدود التطبيقات عند الحاجة."],"الهدف تنظيم الاستخدام وليس العقاب."],
+["الموقع والخصوصية","راجعي مشاركة الموقع والبيانات الشخصية.",["راجعي Location Services","راجعي التطبيقات التي تصل للموقع","راجعي إعدادات الخصوصية."],"لا تشاركي الموقع مع الغرباء."]
+]},
+{id:"safety",icon:"🚨",title:"إذا حدثت مشكلة",desc:"الغرباء والتنمر والابتزاز وطلب الصور والمشتريات.",items:[
+["شخص غريب","طفلي تلقى رسالة من شخص لا يعرفه.",["لا يرد الطفل أو يشارك معلوماته","احظري الحساب","أخبري شخصًا بالغًا موثوقًا."],"لا تلومي الطفل على إخبارك."],
+["طلب صورة خاصة","شخص طلب من الطفل صورة خاصة.",["لا يرسل الطفل أي صورة","يوقف التواصل ويحظر الشخص","احتفظي بالدليل واطلبي المساعدة."],"حتى لو قال الشخص إنه يعرفه، لا يرسل شيئًا."],
+["ابتزاز إلكتروني","شخص يهدد الطفل أو يطلب مالًا.",["لا يدفع الطفل ولا يرسل المزيد","احتفظي بالأدلة","استخدمي الإبلاغ واطلبي مساعدة موثوقة."],"الأولوية لسلامة الطفل وعدم بقائه وحده."],
+["تنمر إلكتروني","تعليقات أو رسائل مؤذية متكررة.",["وثّقي ما حدث","احظري أو قيّدي الحساب","تواصلي مع المدرسة أو الجهة المناسبة عند الحاجة."],"ركزي على حماية الطفل بدل الرد الانتقامي."],
+["شراء غير مقصود","تم شراء شيء داخل لعبة دون إذن.",["راجعي سجل الشراء","راجعي إعدادات الموافقة والإنفاق","ضعي قاعدة شراء واضحة."],"حوّلي الحادثة إلى فرصة للتعلم."]
+]},
+{id:"family",icon:"👨‍👩‍👧",title:"اتفاق الأسرة",desc:"قواعد بسيطة يفهمها الطفل ويشارك في وضعها.",items:[
+["قاعدة 1","لا أشارك كلمة المرور أو رمز الدخول.",["أشرح للطفل ما هي المعلومات الخاصة","أوضح له من يمكنه طلبها","أتأكد أنه يعرف أنه يستطيع إخباري."],"الطفل يحتاج شخصًا بالغًا آمنًا يلجأ إليه."],
+["قاعدة 2","لا صور خاصة ولا معلومات شخصية.",["الاسم الكامل والعنوان والمدرسة معلومات خاصة","لا إرسال صور خاصة","لا مشاركة الموقع مع الغرباء."],"اجعلي القاعدة قصيرة وسهلة التذكر."],
+["قاعدة 3","لا شراء دون إذن.",["أشرح ما هو الشراء داخل اللعبة","لا أحفظ وسيلة دفع دون حماية","نراجع أي طلب معًا."],"وضوح القاعدة يقلل النزاعات."],
+["قاعدة 4","إذا أخافني أحد أخبر أمي أو أبي.",["لا عقاب لمجرد الإخبار","أستمع أولًا","نقرر الخطوة التالية معًا."],"الثقة أهم أدوات الأمان."]
+]}
+];
+let state={};let cm=0,ci=0;const $=id=>document.getElementById(id);
+function hideAll(){["home","list","detail","reportPage"].forEach(x=>$(x).classList.add("hidden"))}
+function goHome(){hideAll();$("home").classList.remove("hidden");renderHome();window.scrollTo(0,0)}
+function goList(){openModule(cm)}
+function total(){return modules.reduce((n,m)=>n+m.items.length,0)}
+function done(){return Object.values(state).filter(x=>x==="done").length}
+function renderHome(){$("modules").innerHTML=modules.map((m,i)=>{let d=m.items.filter((x,j)=>state[m.id+"-"+j]==="done").length;return `<button class="tile" onclick="openModule(${i})"><span class="icon">${m.icon}</span><div class="title">${m.title}</div><div class="small">${m.desc}</div><div class="badge">${d}/${m.items.length} مكتمل</div></button>`}).join("");let p=Math.round(done()/total()*100);$("pct").textContent=p+"%";$("fill").style.width=p+"%"}
+function openModule(i){cm=i;let m=modules[i];hideAll();$("list").classList.remove("hidden");$("listHead").innerHTML=`<div class="icon">${m.icon}</div><h2>${m.title}</h2><p class="muted">${m.desc}</p>`;$("items").innerHTML=m.items.map((x,j)=>{let s=state[m.id+"-"+j]||"";let l=s==="done"?"✓ تم":s==="later"?"⏱ لاحقًا":s==="no"?"؟ لم أجده":"ابدئي";return `<button class="tile" style="margin:6px 0" onclick="openItem(${j})"><b>${j+1}. ${x[0]}</b><span class="badge" style="float:left">${l}</span><div class="small">اضغطي لفتح الخطوات</div></button>`}).join("");window.scrollTo(0,0)}
+function openItem(i){ci=i;let m=modules[cm],x=m.items[i];hideAll();$("detail").classList.remove("hidden");$("detailBody").innerHTML=`<div class="badge">${m.title} • ${i+1}/${m.items.length}</div><h2>${x[0]}</h2><div class="card" style="background:#eef6ff"><b>لماذا يهم؟</b><p>${x[1]}</p></div><h3>كيف أعملها؟</h3>${x[2].map((s,n)=>`<div class="step"><div class="num">${n+1}</div><div>${s}</div></div>`).join("")}<div class="notice"><b>نصيحة</b><br>${x[3]}</div><div class="actions"><button onclick="setStatus('done')">✓ تم</button><button onclick="setStatus('later')">⏱ لاحقًا</button><button onclick="setStatus('no')">؟ لم أجده</button></div>`;window.scrollTo(0,0)}
+function setStatus(s){state[modules[cm].id+"-"+ci]=s;openModule(cm)}
+function showReport(){hideAll();$("reportPage").classList.remove("hidden");let rows="";modules.forEach(m=>m.items.forEach((x,i)=>{let s=state[m.id+"-"+i]||"غير محدد";rows+=`<div class="step"><div style="flex:1"><b>${m.icon} ${x[0]}</b></div><div class="badge">${s==="done"?"✓ تم":s==="later"?"⏱ لاحقًا":s==="no"?"؟ لم أجده":"—"}</div></div>`}));$("reportRows").innerHTML=rows;let left=total()-done();$("reportAdvice").innerHTML=left===0?"🎉 أكملتِ جميع نقاط الفحص. راجعي الإعدادات دوريًا بعد تحديثات الأجهزة.":`لديك ${left} نقطة تحتاج إلى متابعة. ابدئي بالنقاط المتعلقة بالتواصل والمشتريات ووقت اللعب.`;window.scrollTo(0,0)}
+function resetAll(){state={};goHome()}renderHome();
+</script>
+</body></html>
